@@ -17,7 +17,7 @@ class JwtHandler: IJwtHandler {
 
     override fun generateToken(email: String): String = Jwts.builder()
         .setSubject(email)
-        .setExpiration(Date.from(LocalDateTime.now().plusMinutes(1).atZone(ZoneId.systemDefault()).toInstant()))
+        .setExpiration(Date.from(LocalDateTime.now().plusYears(10).atZone(ZoneId.systemDefault()).toInstant()))
         .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
         .compact()
 
