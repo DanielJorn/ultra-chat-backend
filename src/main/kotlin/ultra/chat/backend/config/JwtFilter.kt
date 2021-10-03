@@ -24,12 +24,9 @@ class JwtFilter @Autowired constructor(
 
     override fun doFilter(servletRequest: ServletRequest?, servletResponse: ServletResponse?, filterChain: FilterChain?) {
         val token: String? = getTokenFromRequest(servletRequest as HttpServletRequest)
-        println("token: $token")
         if (token != null && jwtHandler.validateToken(token)) {
             val email: String = jwtHandler.getEmailFromToken(token)
-            println("email: $email")
             val userDetails: UserDetails = userDetailsService.loadUserByUsername(email)
-            println("userDetails: ${userDetails.password}")
             val auth = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
             SecurityContextHolder.getContext().authentication = auth
         }
@@ -37,6 +34,10 @@ class JwtFilter @Autowired constructor(
     }
 
     private fun getTokenFromRequest(request: HttpServletRequest): String? {
+        val requestToken: String? = request.getParameter("token")
+        if (requestToken != null && requestToken.isNotEmpty()) {
+            return requestToken
+        }
         val bearer = request.getHeader(AUTHORIZATION_HEADER) ?: return null
         if (bearer.isNotEmpty() && bearer.startsWith("Bearer ")) {
             return bearer.substring(7);
